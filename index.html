@@ -4,21 +4,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IRAM 3D — Spatial Computing & Agentic WebGL Suite</title>
+  <meta name="description" content="Real-time Three.js spatial computing, force-directed agent graphs, and zero-restart GPU desktop shaders for IRAM OS.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #090a0f;
-      --card-bg: rgba(18, 20, 29, 0.75);
-      --border: rgba(0, 240, 255, 0.2);
-      --border-hover: rgba(0, 240, 255, 0.8);
-      --cyan: #00f0ff;
-      --pink: #ff007f;
-      --green: #05ffa1;
-      --amber: #ffb703;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
+      color-scheme: dark;
+      --bg: #121110;
+      --surface: #1a1917;
+      --surface-2: #24221f;
+      --ink: #f2efe8;
+      --muted: #a8a297;
+      --line: #2f2c28;
+      --line-hover: rgba(242, 120, 75, 0.4);
+      --accent: #f2784b;
+      --accent-ink: #1f0f08;
+      --accent-glow: rgba(242, 120, 75, 0.15);
+      --badge-bg: rgba(242, 120, 75, 0.12);
+      --cyan: #38bdf8;
+      --pink: #f43f5e;
+      --green: #4ade80;
+      --amber: #fbbf24;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f4ee;
+      --surface: #fffdf9;
+      --surface-2: #efebe2;
+      --ink: #1c1a17;
+      --muted: #615c53;
+      --line: #dfd9cc;
+      --line-hover: rgba(194, 65, 12, 0.4);
+      --accent: #c2410c;
+      --accent-ink: #ffffff;
+      --accent-glow: rgba(194, 65, 12, 0.12);
+      --badge-bg: rgba(194, 65, 12, 0.08);
+      --cyan: #0284c7;
+      --pink: #e11d48;
+      --green: #15803d;
+      --amber: #b45309;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
     }
 
     * {
@@ -28,15 +56,90 @@
     }
 
     body {
-      background: radial-gradient(circle at 50% 0%, #151829 0%, var(--bg) 70%);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 3rem 1.5rem;
+      padding: 2.5rem 1.5rem;
       overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .top-nav {
+      max-width: 1100px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-brand-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--ink);
+      background: var(--surface-2);
+    }
+
+    .theme-toggle-btn {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--accent);
+      background: var(--surface-2);
     }
 
     .container {
@@ -46,38 +149,37 @@
 
     header {
       text-align: center;
-      margin-bottom: 3.5rem;
+      margin-bottom: 4rem;
     }
 
     .badge {
       display: inline-block;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      padding: 0.4rem 1rem;
+      letter-spacing: 0.12em;
+      padding: 0.35rem 0.9rem;
       border-radius: 9999px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid var(--border);
-      color: var(--cyan);
+      background: var(--badge-bg);
+      border: 1px solid var(--line);
+      color: var(--accent);
       margin-bottom: 1.25rem;
     }
 
     h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
       margin-bottom: 1rem;
-      background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--ink);
     }
 
     p.subtitle {
       color: var(--muted);
       font-size: 1.15rem;
-      max-width: 650px;
+      max-width: 680px;
       margin: 0 auto;
       line-height: 1.6;
     }
@@ -90,18 +192,18 @@
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
       padding: 1.75rem;
       text-decoration: none;
       color: inherit;
       display: flex;
       flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(12px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow);
     }
 
     .card::before {
@@ -111,15 +213,15 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, transparent, var(--accent, var(--cyan)), transparent);
+      background: var(--card-accent, var(--accent));
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      border-color: var(--border-hover);
-      box-shadow: 0 12px 30px rgba(0, 240, 255, 0.15);
+      transform: translateY(-4px);
+      border-color: var(--line-hover);
+      box-shadow: 0 16px 36px var(--accent-glow);
     }
 
     .card:hover::before {
@@ -127,20 +229,29 @@
     }
 
     .icon-wrap {
-      font-size: 2.25rem;
+      font-size: 2.2rem;
       margin-bottom: 1.25rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-2);
+      border-radius: 10px;
+      border: 1px solid var(--line);
     }
 
     .card h2 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
       margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
     }
 
     .card p {
       color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.5;
+      font-size: 0.92rem;
+      line-height: 1.55;
       margin-bottom: 1.5rem;
       flex-grow: 1;
     }
@@ -150,27 +261,47 @@
       align-items: center;
       gap: 0.5rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      color: var(--accent, var(--cyan));
+      color: var(--card-accent, var(--accent));
     }
 
     .footer {
       text-align: center;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       padding-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--line);
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .footer a {
-      color: var(--cyan);
+      color: var(--accent);
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <nav class="top-nav">
+    <a href="https://www.pravintamilan.com/iram-os/" class="nav-brand">
+      <span>🌌 IRAM OS</span>
+      <span class="nav-brand-badge">Spatial 3D</span>
+    </a>
+    <div class="nav-actions">
+      <a href="https://apravint.github.io/iram-docs/" class="nav-link">Documentation</a>
+      <a href="https://www.pravintamilan.com/" class="nav-link">Main Site</a>
+      <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark/Light Theme">☀️</button>
+    </div>
+  </nav>
+
   <div class="container">
     <header>
       <span class="badge">IRAM OS SPATIAL LAB</span>
@@ -179,28 +310,28 @@
     </header>
 
     <div class="grid">
-      <a href="assets/3d-viewer/index.html" class="card" style="--accent: var(--cyan);">
+      <a href="assets/3d-viewer/index.html" class="card" style="--card-accent: var(--cyan);">
         <div class="icon-wrap">🪐</div>
         <h2>3D CAD & Biomolecule Viewer</h2>
         <p>Inspect CAD/STL models, PDB proteins, and chemical structures directly in your browser with real-time orbit lighting.</p>
         <span class="action">Launch Viewer &rarr;</span>
       </a>
 
-      <a href="assets/agent-graph/index.html" class="card" style="--accent: var(--pink);">
+      <a href="assets/agent-graph/index.html" class="card" style="--card-accent: var(--pink);">
         <div class="icon-wrap">🕸️</div>
         <h2>3D Agent Swarm Graph</h2>
         <p>Force-directed 3D swarm topology visualizer showing live inter-agent IPC conduits, task dispatch, and photon pulses.</p>
         <span class="action">Launch Graph &rarr;</span>
       </a>
 
-      <a href="assets/theme-studio/index.html" class="card" style="--accent: var(--green);">
+      <a href="assets/theme-studio/index.html" class="card" style="--card-accent: var(--green);">
         <div class="icon-wrap">🎨</div>
         <h2>WebGL Theme Studio</h2>
         <p>Interactive 18-theme studio with live PBR metallic/roughness material tuning and real-time colorway exports.</p>
         <span class="action">Launch Studio &rarr;</span>
       </a>
 
-      <a href="assets/video-motion-3d/index.html" class="card" style="--accent: var(--amber);">
+      <a href="assets/video-motion-3d/index.html" class="card" style="--card-accent: var(--amber);">
         <div class="icon-wrap">🎬</div>
         <h2>Video Motion 3D</h2>
         <p>Dynamic camera trajectory planner, orbital pan/tilt choreographer, and volumetric lighting keyframer.</p>
@@ -209,8 +340,41 @@
     </div>
 
     <footer class="footer">
-      <p>Part of <a href="https://github.com/apravint/iram-os">IRAM OS</a> &bull; Created by <a href="https://github.com/apravint">Ayyappa Pravin (@apravint)</a></p>
+      <p>Part of <a href="https://github.com/apravint/iram-os">IRAM OS</a> &bull; Portfolio of <a href="https://www.pravintamilan.com">Pravin Tamilan (@apravint)</a></p>
+      <p style="font-size: 0.8rem; color: var(--muted);">Calm editorial design synchronized with pravintamilan.com</p>
     </footer>
   </div>
+
+  <script>
+    (function() {
+      const root = document.documentElement;
+      const btn = document.getElementById('themeToggleBtn');
+      
+      function getInitialTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        localStorage.setItem('theme', t);
+        if (btn) {
+          btn.textContent = t === 'light' ? '🌙' : '☀️';
+          btn.setAttribute('title', t === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme');
+        }
+      }
+
+      const initial = getInitialTheme();
+      setTheme(initial);
+
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const current = root.getAttribute('data-theme') || 'dark';
+          setTheme(current === 'light' ? 'dark' : 'light');
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
